@@ -14,4 +14,9 @@
       this.target = target;
       this.data = data;
     }
+
+  /** / toString */
+    toString() {
+      return `{${this.id}: ${this.source.id} -> ${this.target.id}}`;
+    }
   }

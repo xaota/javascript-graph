@@ -10,4 +10,12 @@
       this.id   = id;
       this.data = data;
     }
+
+  /** / toString */
+    toString() {
+      const [id, label] = [this.id, this.data.label];
+      return id === label
+        ? `{${id}}`
+        : `{${id}: ${label}}`;
+    }
   }

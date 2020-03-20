@@ -25,8 +25,9 @@ import Spring from '../Spring.js';
   /** / point */
     point(node) {
       if (!(node.id in this.nodePoints)) {
+        if (!node.data) debugger;
         var mass = (node.data.mass !== undefined) ? node.data.mass : 1.0;
-        this.nodePoints[node.id] = new Point(Vector.random(), mass);
+        this.nodePoints[node.id] = new Point(Vector.from(10 * (Math.random() - 0.5), 10 * (Math.random() - 0.5)), mass);
       }
 
       return this.nodePoints[node.id];
@@ -94,13 +95,13 @@ import Spring from '../Spring.js';
       this.eachNode(function(n1, point1) {
         this.eachNode(function(n2, point2) {
           if (point1 !== point2) {
-            var d = point1.p.subtract(point2.p);
-            var distance = d.magnitude() + 0.1; // avoid massive forces at small distances (and divide by zero)
-            var direction = d.normalise();
+            var d = point1.position.difference(point2.position);
+            var distance = d.length() + 0.1; // .length | avoid massive forces at small distances (and divide by zero)
+            var direction = d.normalize();
 
             // apply force to each end point
-            point1.applyForce(direction.multiply(this.repulsion).divide(distance * distance * 0.5));
-            point2.applyForce(direction.multiply(this.repulsion).divide(distance * distance * -0.5));
+            point1.applyForce(direction.scale(this.repulsion).divide(distance * distance * 0.5));
+            point2.applyForce(direction.scale(this.repulsion).divide(distance * distance * -0.5));
           }
         });
       });
@@ -109,21 +110,21 @@ import Spring from '../Spring.js';
   /** / applyHookesLaw */
     applyHookesLaw() {
       this.eachSpring(spring => {
-        var d = spring.point2.p.subtract(spring.point1.p); // the direction of the spring
-        var displacement = spring.length - d.magnitude();
-        var direction = d.normalise();
+        var d = spring.point2.position.difference(spring.point1.position); // the direction of the spring
+        var displacement = spring.length - d.length();
+        var direction = d.normalize();
 
         // apply force to each end point
-        spring.point1.applyForce(direction.multiply(spring.k * displacement * -0.5));
-        spring.point2.applyForce(direction.multiply(spring.k * displacement * 0.5));
+        spring.point1.applyForce(direction.scale(spring.k * displacement * -0.5));
+        spring.point2.applyForce(direction.scale(spring.k * displacement * 0.5));
       });
     }
 
   /** / attractToCentre */
     attractToCentre() {
       this.eachNode((node, point) => {
-        var direction = point.p.multiply(-1.0);
-        point.applyForce(direction.multiply(this.repulsion / 50.0));
+        var direction = point.position.scale(-1.0);
+        point.applyForce(direction.scale(this.repulsion / 50.0));
       });
     }
 
@@ -132,11 +133,11 @@ import Spring from '../Spring.js';
       this.eachNode((node, point) => {
         // Is this, along with updatePosition below, the only places that your
         // integration code exist?
-        point.v = point.v.add(point.a.multiply(timestep)).multiply(this.damping);
-        if (point.v.magnitude() > this.maxSpeed) {
-            point.v = point.v.normalise().multiply(this.maxSpeed);
+        point.velocity = point.velocity.addition(point.acceleration.scale(timestep)).scale(this.damping);
+        if (point.velocity.length() > this.maxSpeed) {
+            point.velocity = point.velocity.normalize().scale(this.maxSpeed);
         }
-        point.a = Vector.from(0,0);
+        point.acceleration = Vector.zero;
       });
     }
 
@@ -145,7 +146,7 @@ import Spring from '../Spring.js';
       this.eachNode(function(node, point) {
         // Same question as above; along with updateVelocity, is this all of
         // your integration code?
-        point.p = point.p.add(point.v.multiply(timestep));
+        point.position = point.position.addition(point.velocity.scale(timestep));
       });
     }
 
@@ -153,8 +154,8 @@ import Spring from '../Spring.js';
     totalEnergy(timestep) {
       var energy = 0.0;
       this.eachNode(function(node, point) {
-        var speed = point.v.magnitude();
-        energy += 0.5 * point.m * speed * speed;
+        var speed = point.velocity.length();
+        energy += 0.5 * point.mass * speed * speed;
       });
 
       return energy;
@@ -172,7 +173,7 @@ import Spring from '../Spring.js';
 
       if (onRenderStart !== undefined) { onRenderStart(); }
 
-      Springy.requestAnimationFrame(function step() {
+      requestAnimationFrame(function step() {
         t.tick(0.03);
 
         if (render !== undefined) {
@@ -184,7 +185,7 @@ import Spring from '../Spring.js';
           t._started = false;
           if (onRenderStop !== undefined) { onRenderStop(); }
         } else {
-          Springy.requestAnimationFrame(step);
+          requestAnimationFrame(step);
         }
       });
     }
@@ -209,7 +210,7 @@ import Spring from '../Spring.js';
       var t = this;
       this.graph.nodes.forEach(n =>{
         var point = t.point(n);
-        var distance = point.p.subtract(pos).magnitude();
+        var distance = point.position.difference(pos).length();
 
         if (min.distance === null || distance < min.distance) {
           min = {node: n, point, distance};
@@ -227,21 +228,21 @@ import Spring from '../Spring.js';
       var topright = Vector.from(2,2);
 
       this.eachNode(function(n, point) {
-        if (point.p.x < bottomleft.x) {
-          bottomleft.x = point.p.x;
+        if (point.position.x < bottomleft.x) {
+          bottomleft.x = point.position.x;
         }
-        if (point.p.y < bottomleft.y) {
-          bottomleft.y = point.p.y;
+        if (point.position.y < bottomleft.y) {
+          bottomleft.y = point.position.y;
         }
-        if (point.p.x > topright.x) {
-          topright.x = point.p.x;
+        if (point.position.x > topright.x) {
+          topright.x = point.position.x;
         }
-        if (point.p.y > topright.y) {
-          topright.y = point.p.y;
+        if (point.position.y > topright.y) {
+          topright.y = point.position.y;
         }
       });
 
-      var padding = topright.subtract(bottomleft).multiply(0.07); // ~5% padding
+      var padding = topright.subtract(bottomleft).scale(0.07); // ~5% padding
 
       return {bottomleft: bottomleft.subtract(padding), topright: topright.add(padding)};
     }

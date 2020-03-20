@@ -1,7 +1,7 @@
-/** {Render} Рисование графа @class @export @default
+/** {Renderer} Рисование графа @class @export @default
   *
   */
-  export default class Render {
+  export default class Renderer {
   /** {Render} Создание объекта для рисования графа @constructor
     * @param onRenderStop optional callback function that gets executed whenever rendering stops.
     * @param onRenderStart optional callback function that gets executed whenever rendering starts.
@@ -39,11 +39,11 @@
         t.clear();
 
         t.layout.eachEdge(function(edge, spring) {
-          t.drawEdge(edge, spring.point1.p, spring.point2.p);
+          t.drawEdge(edge, spring.point1.position, spring.point2.position);
         });
 
         t.layout.eachNode(function(node, point) {
-          t.drawNode(node, point.p);
+          t.drawNode(node, point.position);
         });
 
         if (t.onRenderFrame !== undefined) { t.onRenderFrame(); }

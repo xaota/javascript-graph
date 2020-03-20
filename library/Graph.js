@@ -1,3 +1,5 @@
+import Obj from 'javascript-std-lib/object.js';
+
 import Node from './Node.js';
 import Edge from './Edge.js';
 
@@ -16,6 +18,13 @@ import Edge from './Edge.js';
       this.nextNodeId = 0;
       this.nextEdgeId = 0;
       this.eventListeners = [];
+    }
+
+  /** / toString */
+    toString() {
+      const nodes = this.nodes.length <= 16 ? `\n  ${this.nodes.join('\n  ')}\n` : '';
+      const edges = this.edges.length <= 16 ? `\n  ${this.edges.join('\n  ')}`   : '';
+      return `Nodes: ${this.nodes.length}${nodes}\nEdges: ${this.edges.length}${edges}`;
     }
 
   /** / addNode */
@@ -211,14 +220,19 @@ import Edge from './Edge.js';
       this.eventListeners.forEach(obj => obj.graphChanged());
     }
 
-  /** / json @static */
-    static json(text) {
-      const json = JSON.parse(text);
+  /** */
+    loadOBJ(json) {
       const graph = new Graph();
       if ('nodes' in json || 'edges' in json) {
-        graph.addNodes(...json['nodes']);
-        graph.addEdges(...json['edges']);
+        this.addNodes(...json['nodes']);
+        this.addEdges(...json['edges']);
       }
+    }
+
+  /** / json @static */
+    static obj(json) {
+      const graph = new Graph();
+      graph.loadOBJ(json);
       return graph;
     }
 }

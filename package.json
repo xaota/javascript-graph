@@ -1,6 +1,6 @@
 {
   "name": "javascript-graph",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Работа с графами",
   "main": "index.js",
   "type": "module",
@@ -29,7 +29,8 @@
   },
   "homepage": "https://github.com/xaota/javascript-graph#readme",
   "dependencies": {
-    "javascript-algebra": "latest"
+    "javascript-algebra": "latest",
+    "javascript-std-lib": "latest"
   },
   "devDependencies": {
     "eslint": "^6.6.0",
