@@ -32,3 +32,16 @@ const graph = new Graph();
 
 ...
 ```
+
+### Дополнительно
+Если вы используете vscode, можно настроить резолв для корректной работы самого редактора с помощью файла `jsconfig.json`
+```json
+{
+  "compilerOptions": {
+    "baseUrl": "../node_modules/",
+    "paths": {
+      "javascript-graph/*": ["./javascript-graph/library/*"]
+    }
+  }
+}
+```
