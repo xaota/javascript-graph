@@ -1,0 +1,38 @@
+{
+  "name": "javascript-graph",
+  "version": "0.0.1",
+  "description": "Работа с графами",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xaota/javascript-graph.git"
+  },
+  "keywords": [
+    "javascript",
+    "js",
+    "primitives",
+    "esmodules",
+    "graph",
+    "geometry",
+    "2d",
+    "3d",
+    "graphics",
+    "physics",
+    "canvas"
+  ],
+  "author": "https://github.com/xaota",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/xaota/javascript-graph/issues"
+  },
+  "homepage": "https://github.com/xaota/javascript-graph#readme",
+  "dependencies": {
+    "javascript-algebra": "latest"
+  },
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "babel-eslint": "^10.0.3"
+  }
+}
