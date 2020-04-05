@@ -22,12 +22,22 @@ import Spring from '../Spring.js';
       this.edgeSprings = {}; // keep track of springs associated with edges
     }
 
+  // itemCount = 0;
+  randomlyDiagonalVector() {
+    // this.itemCount += 1;
+    const value = () => 10.0 * (Math.random() - 0.5);
+    // const value = () => 3.0 * (this.itemCount * 3 - 0.5) + Math.random() % 10;
+    // const value = () => 3.0 * (this.itemCount / 2 + Math.random()) - this.itemCount*1.5;
+    return Vector.from(value(), value()); //ADDED PER
+  }
+
   /** / point */
     point(node) {
       if (!(node.id in this.nodePoints)) {
         if (!node.data) debugger;
         var mass = (node.data.mass !== undefined) ? node.data.mass : 1.0;
-        this.nodePoints[node.id] = new Point(Vector.from(10 * (Math.random() - 0.5), 10 * (Math.random() - 0.5)), mass);
+        // this.nodePoints[node.id] = new Point(Vector.from(10 * (Math.random() - 0.5), 10 * (Math.random() - 0.5)), mass);
+        this.nodePoints[node.id] = new Point(this.randomlyDiagonalVector(), mass);
       }
 
       return this.nodePoints[node.id];
