@@ -34,7 +34,7 @@
      * @param {function} done An optional callback function that gets executed when the springy algorithm stops, either because it ended or because stop() was called.
      */
     start(done) {
-      var t = this;
+      const t = this;
       this.layout.start(function() {
         t.clear();
 

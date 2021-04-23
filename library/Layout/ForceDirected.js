@@ -15,7 +15,7 @@ import Spring from '../Spring.js';
       this.stiffness = stiffness; // spring stiffness constant
       this.repulsion = repulsion; // repulsion constant
       this.damping = damping; // velocity damping factor
-      this.minEnergyThreshold = minEnergyThreshold || 0.01; //threshold used to determine render stop
+      this.minEnergyThreshold = minEnergyThreshold || 0.01; // threshold used to determine render stop
       this.maxSpeed = maxSpeed || Infinity; // nodes aren't allowed to exceed this speed
 
       this.nodePoints = {}; // keep track of points associated with nodes
@@ -28,14 +28,14 @@ import Spring from '../Spring.js';
     const value = () => 10.0 * (Math.random() - 0.5);
     // const value = () => 3.0 * (this.itemCount * 3 - 0.5) + Math.random() % 10;
     // const value = () => 3.0 * (this.itemCount / 2 + Math.random()) - this.itemCount*1.5;
-    return Vector.from(value(), value()); //ADDED PER
+    return Vector.from(value(), value()); // ADDED PER
   }
 
   /** / point */
     point(node) {
       if (!(node.id in this.nodePoints)) {
         if (!node.data) debugger;
-        var mass = (node.data.mass !== undefined) ? node.data.mass : 1.0;
+        const mass = (node.data.mass !== undefined) ? node.data.mass : 1.0;
         // this.nodePoints[node.id] = new Point(Vector.from(10 * (Math.random() - 0.5), 10 * (Math.random() - 0.5)), mass);
         this.nodePoints[node.id] = new Point(this.randomlyDiagonalVector(), mass);
       }
@@ -46,11 +46,11 @@ import Spring from '../Spring.js';
   /** / spring */
     spring(edge) {
       if (!(edge.id in this.edgeSprings)) {
-        var length = (edge.data.length !== undefined) ? edge.data.length : 1.0;
+        const length = (edge.data.length !== undefined) ? edge.data.length : 1.0;
 
-        var existingSpring = false;
+        let existingSpring = false;
 
-        var from = this.graph.getEdges(edge.source, edge.target);
+        const from = this.graph.getEdges(edge.source, edge.target);
         from.forEach(e => {
           if (existingSpring === false && e.id in this.edgeSprings) {
             existingSpring = this.edgeSprings[e.id];
@@ -61,7 +61,7 @@ import Spring from '../Spring.js';
           return new Spring(existingSpring.point1, existingSpring.point2, 0.0, 0.0);
         }
 
-        var to = this.graph.getEdges(edge.target, edge.source);
+        const to = this.graph.getEdges(edge.target, edge.source);
         from.forEach(e => {
           if (existingSpring === false && e.id in this.edgeSprings) {
             existingSpring = this.edgeSprings[e.id];
@@ -87,7 +87,7 @@ import Spring from '../Spring.js';
 
     /** callback should accept two arguments: Edge, Spring / eachEdge */
     eachEdge(callback) {
-      this.graph.edges.forEach(e =>{
+      this.graph.edges.forEach(e => {
         callback.call(this, e, this.spring(e));
       });
     }
@@ -99,15 +99,14 @@ import Spring from '../Spring.js';
       });
     }
 
-
     /** Physics stuff / applyCoulombsLaw */
     applyCoulombsLaw() {
       this.eachNode(function(n1, point1) {
         this.eachNode(function(n2, point2) {
           if (point1 !== point2) {
-            var d = point1.position.difference(point2.position);
-            var distance = d.length() + 0.1; // .length | avoid massive forces at small distances (and divide by zero)
-            var direction = d.normalize();
+            const d = point1.position.difference(point2.position);
+            const distance = d.length() + 0.1; // .length | avoid massive forces at small distances (and divide by zero)
+            const direction = d.normalize();
 
             // apply force to each end point
             point1.applyForce(direction.scale(this.repulsion).divide(distance * distance * 0.5));
@@ -120,9 +119,9 @@ import Spring from '../Spring.js';
   /** / applyHookesLaw */
     applyHookesLaw() {
       this.eachSpring(spring => {
-        var d = spring.point2.position.difference(spring.point1.position); // the direction of the spring
-        var displacement = spring.length - d.length();
-        var direction = d.normalize();
+        const d = spring.point2.position.difference(spring.point1.position); // the direction of the spring
+        const displacement = spring.length - d.length();
+        const direction = d.normalize();
 
         // apply force to each end point
         spring.point1.applyForce(direction.scale(spring.k * displacement * -0.5));
@@ -133,7 +132,7 @@ import Spring from '../Spring.js';
   /** / attractToCentre */
     attractToCentre() {
       this.eachNode((node, point) => {
-        var direction = point.position.scale(-1.0);
+        const direction = point.position.scale(-1.0);
         point.applyForce(direction.scale(this.repulsion / 50.0));
       });
     }
@@ -162,9 +161,9 @@ import Spring from '../Spring.js';
 
   /** Calculate the total kinetic energy of the system / totalEnergy */
     totalEnergy(timestep) {
-      var energy = 0.0;
+      let energy = 0.0;
       this.eachNode(function(node, point) {
-        var speed = point.velocity.length();
+        const speed = point.velocity.length();
         energy += 0.5 * point.mass * speed * speed;
       });
 
@@ -175,7 +174,7 @@ import Spring from '../Spring.js';
     * In case it's running then the call is ignored, and none of the callbacks passed is ever executed.
     */
     start(render, onRenderStop, onRenderStart) {
-      var t = this;
+      const t = this;
 
       if (this._started) return;
       this._started = true;
@@ -216,14 +215,14 @@ import Spring from '../Spring.js';
 
   /** Find the nearest point to a particular position / nearest */
     nearest(pos) {
-      var min = {node: null, point: null, distance: null};
-      var t = this;
-      this.graph.nodes.forEach(n =>{
-        var point = t.point(n);
-        var distance = point.position.difference(pos).length();
+      let min = { node: null, point: null, distance: null };
+      const t = this;
+      this.graph.nodes.forEach(n => {
+        const point = t.point(n);
+        const distance = point.position.difference(pos).length();
 
         if (min.distance === null || distance < min.distance) {
-          min = {node: n, point, distance};
+          min = { node: n, point, distance };
         }
       });
 
@@ -234,8 +233,8 @@ import Spring from '../Spring.js';
     * @return {Array} [bottomleft, topright]
     */
     getBoundingBox() {
-      var bottomleft = Vector.from(-2,-2);
-      var topright = Vector.from(2,2);
+      const bottomleft = Vector.from(-2, -2);
+      const topright = Vector.from(2, 2);
 
       this.eachNode(function(n, point) {
         if (point.position.x < bottomleft.x) {
@@ -252,8 +251,8 @@ import Spring from '../Spring.js';
         }
       });
 
-      var padding = topright.subtract(bottomleft).scale(0.07); // ~5% padding
+      const padding = topright.subtract(bottomleft).scale(0.07); // ~5% padding
 
-      return {bottomleft: bottomleft.subtract(padding), topright: topright.add(padding)};
+      return { bottomleft: bottomleft.subtract(padding), topright: topright.add(padding) };
     }
   }

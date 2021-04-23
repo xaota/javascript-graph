@@ -38,7 +38,7 @@ import Edge from './Edge.js';
 
   /** / addNodes */
     addNodes(...nodes) {
-      nodes.forEach(name => this.addNode(new Node(name, {label:name})));
+      nodes.forEach(name => this.addNode(new Node(name, { label:name })));
       return this;
     }
 
@@ -78,15 +78,15 @@ import Edge from './Edge.js';
     */
     addEdges(...edges) {
       edges.forEach(e => {
-        var node1 = this.nodeSet[e[0]];
+        const node1 = this.nodeSet[e[0]];
         if (node1 == undefined) {
-          throw new TypeError("invalid node name: " + e[0]);
+          throw new TypeError('invalid node name: ' + e[0]);
         }
-        var node2 = this.nodeSet[e[1]];
+        const node2 = this.nodeSet[e[1]];
         if (node2 == undefined) {
-          throw new TypeError("invalid node name: " + e[1]);
+          throw new TypeError('invalid node name: ' + e[1]);
         }
-        var attr = e[2];
+        const attr = e[2];
 
         this.newEdge(node1, node2, attr);
       })
@@ -94,14 +94,14 @@ import Edge from './Edge.js';
 
   /** / newNode */
     newNode(data) {
-      var node = new Node(this.nextNodeId++, data);
+      const node = new Node(this.nextNodeId++, data);
       this.addNode(node);
       return node;
     }
 
   /** / newEdge */
     newEdge(source, target, data) {
-      var edge = new Edge(this.nextEdgeId++, source, target, data);
+      const edge = new Edge(this.nextEdgeId++, source, target, data);
       this.addEdge(edge);
       return edge;
     }
@@ -126,7 +126,7 @@ import Edge from './Edge.js';
 
   /** / detachNode */
     detachNode(node) {
-      var tmpEdges = this.edges.slice();
+      const tmpEdges = this.edges.slice();
       tmpEdges.forEach(e => {
         if (e.source.id === node.id || e.target.id === node.id) {
           this.removeEdge(e);
@@ -141,11 +141,11 @@ import Edge from './Edge.js';
       const index = this.edges.findIndex(n => n.id === edge.id);
       if (index > -1) this.edges.splice(index, 1);
 
-      for (var x in this.adjacency) {
-        for (var y in this.adjacency[x]) {
-          var edges = this.adjacency[x][y];
+      for (const x in this.adjacency) {
+        for (const y in this.adjacency[x]) {
+          const edges = this.adjacency[x][y];
 
-          for (var j=edges.length - 1; j>=0; j--) {
+          for (let j = edges.length - 1; j >= 0; j--) {
             if (this.adjacency[x][y][j].id === edge.id) {
               this.adjacency[x][y].splice(j, 1);
             }
@@ -170,29 +170,29 @@ import Edge from './Edge.js';
     * @param {object} data {nodes:[{id, data}], edges:[{from, to, type, directed, data}]}
     */
     merge(data) {
-      var nodes = [];
+      const nodes = [];
       data.nodes.forEach(n => {
         nodes.push(this.addNode(new Node(n.id, n.data)));
       });
 
       data.edges.forEach(e => {
-        var from = nodes[e.from];
-        var to = nodes[e.to];
+        const from = nodes[e.from];
+        const to = nodes[e.to];
 
         var id = (e.directed)
-          ? (id = e.type + "-" + from.id + "-" + to.id)
+          ? (id = e.type + '-' + from.id + '-' + to.id)
           : (from.id < to.id) // normalise id for non-directed edges
-            ? e.type + "-" + from.id + "-" + to.id
-            : e.type + "-" + to.id + "-" + from.id;
+            ? e.type + '-' + from.id + '-' + to.id
+            : e.type + '-' + to.id + '-' + from.id;
 
-        var edge = this.addEdge(new Edge(id, from, to, e.data));
+        const edge = this.addEdge(new Edge(id, from, to, e.data));
         edge.data.type = e.type;
       });
     }
 
   /** / filterNodes */
     filterNodes(fn) {
-      var tmpNodes = this.nodes.slice();
+      const tmpNodes = this.nodes.slice();
       tmpNodes.forEach(function(n) {
         if (!fn(n)) {
           this.removeNode(n);
@@ -202,7 +202,7 @@ import Edge from './Edge.js';
 
   /** / filterEdges */
     filterEdges(fn) {
-      var tmpEdges = this.edges.slice();
+      const tmpEdges = this.edges.slice();
       tmpEdges.forEach(e => {
         if (!fn(e)) {
           this.removeEdge(e);
@@ -224,8 +224,8 @@ import Edge from './Edge.js';
     loadOBJ(json) {
       const graph = new Graph();
       if ('nodes' in json || 'edges' in json) {
-        this.addNodes(...json['nodes']);
-        this.addEdges(...json['edges']);
+        this.addNodes(...json.nodes);
+        this.addEdges(...json.edges);
       }
     }
 
